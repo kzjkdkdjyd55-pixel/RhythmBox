@@ -1,0 +1,32 @@
+{
+  "name": "RhythmBox — Pure Sound & Lyrics",
+  "short_name": "RhythmBox",
+  "description": "Reproductor de música multiplataforma con sonido cinético, ecualizador gráfico y letras sincronizadas karaoke.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#07080d",
+  "theme_color": "#07080d",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%2307080d'/><polygon points='256,90 420,185 420,385 256,480 92,385 92,185' fill='none' stroke='%2300f2fe' stroke-width='28'/><circle cx='256' cy='285' r='70' fill='%2300f2fe'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Letras en Vivo",
+      "short_name": "Letras",
+      "description": "Abrir visor de letras sincronizadas",
+      "url": "./index.html#lyrics"
+    },
+    {
+      "name": "Biblioteca",
+      "short_name": "Biblioteca",
+      "description": "Ver tus canciones y playlists",
+      "url": "./index.html#library"
+    }
+  ]
+}

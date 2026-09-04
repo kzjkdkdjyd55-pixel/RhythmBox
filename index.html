@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="obsidian">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="RhythmBox - Reproductor de música multiplataforma con sonido cinético, ecualizador gráfico y letras sincronizadas karaoke." />
+  <meta name="theme-color" content="#07080d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>RhythmBox — Kinetic Sound & Lyric Studio</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.webmanifest" />
+
+  <!-- Favicon SVG Nativo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%2300f2fe'/><stop offset='100%25' stop-color='%239d4edd'/></linearGradient></defs><rect width='100' height='100' rx='24' fill='%2307080d'/><polygon points='50,20 80,38 80,68 50,86 20,68 20,38' fill='none' stroke='url(%23g)' stroke-width='6'/><circle cx='50' cy='53' r='12' fill='%2300f2fe'/></svg>" />
+
+  <!-- Hojas de Estilos Modulares -->
+  <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/theme.css" />
+  <link rel="stylesheet" href="./css/components.css" />
+  <link rel="stylesheet" href="./css/player.css" />
+  <link rel="stylesheet" href="./css/lyrics.css" />
+  <link rel="stylesheet" href="./css/views.css" />
+</head>
+<body>
+  <!-- Fondo reactivo sutil y ambiental -->
+  <div id="ambient-backdrop"></div>
+
+  <!-- Estructura Principal de la Aplicación -->
+  <div id="app-root">
+    
+    <!-- SIDEBAR DE ESCRITORIO -->
+    <aside id="sidebar" role="navigation" aria-label="Navegación principal">
+      <div class="brand-container">
+        <svg class="brand-logo-icon" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--accent-primary)"/>
+              <stop offset="100%" stop-color="var(--accent-secondary)"/>
+            </linearGradient>
+          </defs>
+          <polygon points="50,15 85,35 85,75 50,95 15,75 15,35" fill="none" stroke="url(#brand-grad)" stroke-width="6"/>
+          <circle cx="50" cy="55" r="14" fill="var(--accent-primary)"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name">RhythmBox</span>
+          <span class="brand-tagline">Kinetic Sound</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-nav="home">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span data-i18n="home">Inicio</span>
+          </button>
+        </li>
+        <li class="nav-item" data-nav="search">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span data-i18n="search">Buscar</span>
+          </button>
+        </li>
+        <li class="nav-item" data-nav="library">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span data-i18n="library">Biblioteca</span>
+          </button>
+        </li>
+        <li class="nav-item" data-nav="lyrics">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <span data-i18n="lyrics">Letras</span>
+          </button>
+        </li>
+        <li class="nav-item" data-nav="queue">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span data-i18n="queue">Cola</span>
+          </button>
+        </li>
+        <li class="nav-item" data-nav="settings">
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span data-i18n="settings">Ajustes</span>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Sección de Playlists Rápidas -->
+      <div class="sidebar-playlists-section">
+        <div class="sidebar-section-header">
+          <span data-i18n="playlists">Playlists</span>
+          <button class="btn-sidebar-add" id="btn-sidebar-create-pl" title="Crear Playlist" aria-label="Crear Playlist">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <ul class="sidebar-playlist-list" id="sidebar-pl-container">
+          <li class="sidebar-playlist-item"><button data-nav="library">Daily Mix 1: Synthwave</button></li>
+          <li class="sidebar-playlist-item"><button data-nav="library">Daily Mix 2: Tokyo Lofi</button></li>
+          <li class="sidebar-playlist-item"><button data-nav="library">Daily Mix 3: Deep Focus</button></li>
+          <li class="sidebar-playlist-item"><button data-nav="library">Daily Mix 4: Brutalist</button></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
+    <main id="main-stage">
+      <!-- Top Header -->
+      <header id="top-header">
+        <div class="header-left">
+          <div class="header-search-bar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="header-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="¿Qué quieres escuchar hoy?" />
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="btn btn-secondary" data-nav="lyrics" style="padding: 6px 14px; font-size: 12px;" aria-label="Letras en vivo">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <span data-i18n="lyrics">Letras</span>
+          </button>
+          <button class="btn btn-secondary" data-nav="settings" style="padding: 6px 14px; font-size: 12px;" aria-label="Ajustes de audio">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+            <span data-i18n="equalizer">EQ</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Contenedor Desplazable de Vistas SPA -->
+      <div id="view-container" tabindex="0">
+        <!-- Contenido inyectado dinámicamente -->
+      </div>
+    </main>
+
+    <!-- NAVEGACIÓN INFERIOR PARA DISPOSITIVOS MÓVILES -->
+    <nav id="mobile-nav" role="navigation" aria-label="Navegación móvil">
+      <button class="mobile-nav-item active" data-nav="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span data-i18n="home">Inicio</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span data-i18n="search">Buscar</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="library">Biblioteca</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="lyrics">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span data-i18n="lyrics">Letras</span>
+      </button>
+      <button class="mobile-nav-item" data-nav="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span data-i18n="settings">Ajustes</span>
+      </button>
+    </nav>
+
+    <!-- MINI-REPRODUCTOR PERSISTENTE -->
+    <section id="mini-player" aria-label="Reproductor persistente">
+      <div class="mini-player-progress-bar" id="mini-scrubber-wrap">
+        <div class="mini-player-progress-fill" id="mini-progress-fill"></div>
+      </div>
+
+      <!-- Info Pista Izquierda -->
+      <div class="player-left-info" id="mini-track-info-trigger" title="Expandir reproductor">
+        <div class="mini-cover-wrap">
+          <img class="mini-cover-img" id="mini-track-cover" src="" alt="Portada" />
+        </div>
+        <div class="player-meta">
+          <span class="player-title" id="mini-track-title">RhythmBox</span>
+          <span class="player-artist" id="mini-track-artist">Cargando sintonía...</span>
+        </div>
+        <button class="btn-icon btn-player-like" aria-label="Me gusta">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Controles Centrales -->
+      <div class="player-center-controls">
+        <div class="playback-buttons">
+          <button class="btn-icon btn-toggle-shuffle" title="Aleatorio" aria-label="Aleatorio">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          </button>
+          <button class="btn-icon btn-skip-prev" title="Anterior" aria-label="Anterior">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="btn-play-circle btn-toggle-play" title="Reproducir / Pausar" aria-label="Reproducir o Pausar">
+            <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          </button>
+          <button class="btn-icon btn-skip-next" title="Siguiente" aria-label="Siguiente">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="btn-icon btn-toggle-repeat" title="Repetir" aria-label="Repetir">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <span class="repeat-one-badge" style="display: none; position: absolute; font-size: 8px; font-weight: 800; top: 4px; right: 6px;">1</span>
+          </button>
+        </div>
+
+        <div class="scrubber-container">
+          <span class="time-label" id="np-time-current">0:00</span>
+          <input type="range" class="range-slider" id="np-scrubber" min="0" max="100" step="0.1" value="0" aria-label="Progreso de pista" />
+          <span class="time-label" id="np-time-duration">3:14</span>
+        </div>
+      </div>
+
+      <!-- Controles Derecha -->
+      <div class="player-right-controls">
+        <button class="btn-icon btn-shortcut-lyrics" title="Letras" aria-label="Letras">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </button>
+        <button class="btn-icon btn-shortcut-queue" title="Cola de reproducción" aria-label="Cola">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+        <button class="btn-icon btn-shortcut-sleep" title="Temporizador de apagado" aria-label="Temporizador de apagado">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </button>
+
+        <div class="volume-control-wrap">
+          <button class="btn-icon" id="btn-toggle-mute" title="Silenciar / Activar" aria-label="Silenciar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </button>
+          <input type="range" class="range-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.85" aria-label="Control de volumen" />
+        </div>
+      </div>
+    </section>
+
+    <!-- OVERLAY REPRODUCTOR COMPLETO NOW PLAYING -->
+    <div id="now-playing-overlay" role="dialog" aria-modal="true" aria-label="Reproduciendo ahora a pantalla completa">
+      <div class="np-backdrop-glow"></div>
+
+      <header class="np-header">
+        <button class="btn-icon" id="btn-close-np" aria-label="Minimizar reproductor">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <span class="np-header-title" data-i18n="nowPlaying">Reproduciendo Ahora</span>
+        <button class="btn-icon btn-shortcut-sleep" aria-label="Temporizador de apagado">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </button>
+      </header>
+
+      <div class="np-content">
+        <!-- Escenario de Carátula o Visualizador -->
+        <div class="np-stage-container" id="np-stage" title="Haz clic para alternar entre carátula y visualizador">
+          <div class="np-cover-wrap" id="np-cover-wrap">
+            <img class="np-cover-img" id="np-track-cover" src="" alt="Portada" />
+            <canvas id="np-visualizer-canvas" width="400" height="400"></canvas>
+          </div>
+        </div>
+
+        <!-- Info Pista -->
+        <div class="np-track-info">
+          <div class="np-track-meta">
+            <h2 class="np-title" id="np-track-title">Midnight Velocity</h2>
+            <span class="np-artist" id="np-track-artist">Kroma Horizon</span>
+            <span class="np-album" id="np-track-album">Neon Odyssey 2099</span>
+          </div>
+          <button class="btn-icon btn-player-like" aria-label="Me gusta">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Controles Now Playing -->
+        <div class="np-controls">
+          <div class="scrubber-container">
+            <span class="time-label" id="np-time-current">0:00</span>
+            <input type="range" class="range-slider" id="mini-scrubber" min="0" max="100" step="0.1" value="0" aria-label="Progreso de pista" />
+            <span class="time-label" id="np-time-duration">3:14</span>
+          </div>
+
+          <div class="np-playback-buttons">
+            <button class="btn-icon btn-toggle-shuffle" aria-label="Aleatorio">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+            </button>
+            <button class="btn-icon btn-skip-prev" aria-label="Anterior">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+            <button class="btn-play-circle btn-toggle-play" style="width: 64px; height: 64px;" aria-label="Reproducir o pausar">
+              <svg viewBox="0 0 24 24" width="28" height="28"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+            </button>
+            <button class="btn-icon btn-skip-next" aria-label="Siguiente">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+            <button class="btn-icon btn-toggle-repeat" aria-label="Repetir">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </button>
+          </div>
+
+          <div class="np-actions-bottom">
+            <button class="btn btn-secondary btn-shortcut-lyrics">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <span data-i18n="lyrics">Letras</span>
+            </button>
+            <button class="btn btn-secondary btn-shortcut-queue">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+              <span data-i18n="queue">Cola</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: TEMPORIZADOR DE APAGADO -->
+    <div class="modal-backdrop" id="modal-sleep-timer" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title" data-i18n="sleepTimer">Temporizador de Apagado</h3>
+          <button class="btn-icon btn-close-modal" aria-label="Cerrar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="modal-body">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn btn-secondary" data-set-sleep-minutes="0" data-i18n="sleepTimerOff">Desactivado</button>
+            <button class="btn btn-secondary" data-set-sleep-minutes="15" data-i18n="sleepTimer15">15 minutos</button>
+            <button class="btn btn-secondary" data-set-sleep-minutes="30" data-i18n="sleepTimer30">30 minutos</button>
+            <button class="btn btn-secondary" data-set-sleep-minutes="45" data-i18n="sleepTimer45">45 minutos</button>
+            <button class="btn btn-secondary" data-set-sleep-minutes="60" data-i18n="sleepTimer60">60 minutos</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PERSONALIZADOR DE LETRAS -->
+    <div class="modal-backdrop" id="modal-lyrics-customizer" role="dialog" aria-modal="true">
+      <div class="modal-card" style="max-width: 520px;">
+        <div class="modal-header">
+          <h3 class="modal-title" data-i18n="lyricsCustomizer">Personalizar Letras</h3>
+          <button class="btn-icon btn-close-modal" aria-label="Cerrar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="modal-body">
+          <!-- Tipografía -->
+          <div class="customizer-section">
+            <span class="customizer-label" data-i18n="fontFamily">Tipografía</span>
+            <div class="btn-group-chips">
+              <button class="chip-btn" data-custom-font="geometric" data-i18n="fontGeometric">Geométrica Sans</button>
+              <button class="chip-btn" data-custom-font="serif" data-i18n="fontSerif">Editorial Serif</button>
+              <button class="chip-btn" data-custom-font="mono" data-i18n="fontMono">Cyber Mono</button>
+              <button class="chip-btn" data-custom-font="display" data-i18n="fontDisplay">Futura Display</button>
+            </div>
+          </div>
+
+          <!-- Tamaño de texto -->
+          <div class="customizer-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span class="customizer-label" data-i18n="fontSize">Tamaño de texto</span>
+              <span id="lyrics-font-size-val" style="font-size: 12px; font-weight: 700; color: var(--accent-primary);">24px</span>
+            </div>
+            <input type="range" class="range-slider" id="lyrics-font-size-slider" min="16" max="38" step="1" value="24" />
+          </div>
+
+          <!-- Alineación -->
+          <div class="customizer-section">
+            <span class="customizer-label" data-i18n="fontAlign">Alineación</span>
+            <div class="btn-group-chips">
+              <button class="chip-btn" data-custom-align="center" data-i18n="alignCenter">Centrado</button>
+              <button class="chip-btn" data-custom-align="left" data-i18n="alignLeft">Izquierda</button>
+            </div>
+          </div>
+
+          <!-- Color de texto activo -->
+          <div class="customizer-section">
+            <span class="customizer-label" data-i18n="textColor">Color de texto activo</span>
+            <div class="btn-group-chips">
+              <button class="chip-btn" data-custom-color="neon" data-i18n="colorNeon">Acento Neón</button>
+              <button class="chip-btn" data-custom-color="dynamic" data-i18n="colorDynamic">Color Carátula</button>
+              <button class="chip-btn" data-custom-color="contrast" data-i18n="colorContrast">Alto Contraste</button>
+            </div>
+          </div>
+
+          <!-- Fondo -->
+          <div class="customizer-section">
+            <span class="customizer-label" data-i18n="backgroundStyle">Estilo de fondo</span>
+            <div class="btn-group-chips">
+              <button class="chip-btn" data-custom-bg="solid" data-i18n="bgSolid">Sólido oscuro</button>
+              <button class="chip-btn" data-custom-bg="gradient" data-i18n="bgGradient">Degradado dinámico</button>
+              <button class="chip-btn" data-custom-bg="blur" data-i18n="bgBlur">Carátula difuminada</button>
+            </div>
+          </div>
+
+          <!-- Transición -->
+          <div class="customizer-section">
+            <span class="customizer-label" data-i18n="transitionStyle">Transición entre líneas</span>
+            <div class="btn-group-chips">
+              <button class="chip-btn" data-custom-transition="fade" data-i18n="transitionFade">Desvanecido suave</button>
+              <button class="chip-btn" data-custom-transition="slide" data-i18n="transitionSlide">Desplazamiento</button>
+              <button class="chip-btn" data-custom-transition="scale" data-i18n="transitionScale">Escala cinética</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: CREAR PLAYLIST -->
+    <div class="modal-backdrop" id="modal-create-playlist" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title" data-i18n="createPlaylist">Nueva Playlist</h3>
+          <button class="btn-icon btn-close-modal" aria-label="Cerrar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom: 16px;">
+            <label class="customizer-label" for="input-new-pl-title" data-i18n="playlistNamePlaceholder">Nombre de la playlist</label>
+            <input type="text" class="search-input-hero" id="input-new-pl-title" placeholder="Mi lista favorita..." style="padding-left: 20px; font-size: 14px;" />
+          </div>
+          <div>
+            <label class="customizer-label" for="input-new-pl-desc" data-i18n="playlistDescPlaceholder">Descripción opcional</label>
+            <input type="text" class="search-input-hero" id="input-new-pl-desc" placeholder="Añade una descripción..." style="padding-left: 20px; font-size: 14px;" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-close-modal" data-i18n="cancel">Cancelar</button>
+          <button class="btn btn-primary" id="btn-submit-create-playlist" data-i18n="save">Guardar Playlist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: COMPARTIR TARJETA VISUAL DE LETRA -->
+    <div class="modal-backdrop" id="modal-share-card" role="dialog" aria-modal="true">
+      <div class="modal-card" style="max-width: 440px;">
+        <div class="modal-header">
+          <h3 class="modal-title" data-i18n="shareQuoteCard">Compartir Tarjeta Visual</h3>
+          <button class="btn-icon btn-close-modal" aria-label="Cerrar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <div class="social-card-preview-wrap">
+            <img class="social-card-img" id="share-card-preview-img" src="" alt="Previsualización de Tarjeta" />
+          </div>
+        </div>
+        <div class="modal-footer" style="justify-content: space-between;">
+          <button class="btn btn-secondary" id="btn-copy-card-text">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span data-i18n="copyLyricText">Copiar texto</span>
+          </button>
+          <button class="btn btn-primary" id="btn-download-card-png">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="downloadCard">Descargar PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENÚ CONTEXTUAL FLOTANTE -->
+    <div class="context-menu" id="track-context-menu" role="menu">
+      <button class="context-menu-item" id="ctx-play-next">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        <span data-i18n="playNext">Reproducir siguiente</span>
+      </button>
+      <button class="context-menu-item" id="ctx-add-queue">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span data-i18n="addToQueue">Añadir a la cola</span>
+      </button>
+      <button class="context-menu-item" id="ctx-toggle-like">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span data-i18n="like">Me gusta</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Script Modular SPA -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
