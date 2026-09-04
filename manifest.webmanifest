@@ -7,11 +7,17 @@
   "background_color": "#07080d",
   "theme_color": "#07080d",
   "orientation": "any",
-  "icons": [
+    "icons": [
     {
-      "src": "data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;rect width='512' height='512' rx='128' fill='%2307080d'/&gt;&lt;polygon points='256,90 420,185 420,385 256,480 92,385 92,185' fill='none' stroke='%2300f2fe' stroke-width='28'/&gt;&lt;circle cx='256' cy='285' r='70' fill='%2300f2fe'/&gt;&lt;/svg&gt;",
+      "src": "launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "launchericon-512x512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
